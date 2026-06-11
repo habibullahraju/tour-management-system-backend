@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import httpStatus from "http-status-codes";
+import { evnVars } from "../../config/env";
 import AppError from "../../errorHelpers/appError";
 import { IAuthProvider, IUser } from "./user.interface";
 import { User } from "./user.model";
@@ -14,7 +15,10 @@ const createUser = async (payload: Partial<IUser>) => {
   if (isUserExist) {
     throw new AppError("User already exist", httpStatus.BAD_REQUEST);
   }
-  const hashPassword = await bcryptjs.hash(password as string, 10);
+  const hashPassword = await bcryptjs.hash(
+    password as string,
+    Number(evnVars.BCRYPT_SALD_ROUND),
+  );
   const authProvider: IAuthProvider = {
     provider: "credentials",
     providerId: email as string,
